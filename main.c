@@ -14,24 +14,6 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
 
-#define BOARD_WIDTH 10
-#define BOARD_HEIGHT 10
-
-#define CELL_WIDTH ( (float) SCREEN_WIDTH/ BOARD_WIDTH)
-#define CELL_HEIGHT ( (float) SCREEN_HEIGHT/ BOARD_HEIGHT)
-
-#define AGENT_PADDING 10
-#define AGENT_HEAD_HEIGHT 20
-#define AGENT_HEAD_WIDTH 20
-#define AGENTS_COUNT 10
-#define AGENT_SPEED 0.01
-
-typedef enum {
-	DIR_RIGHT = 0,
-	DIR_UP,
-	DIR_LEFT,
-	DIR_DOWN,
-} Dir;
 
 typedef struct{
 	int p_count;
@@ -75,16 +57,6 @@ void sdl_set_color_hex(SDL_Renderer *renderer, Uint32 hex) {
 		(hex >> (1 * 8)) & 0XFF, 
 		(hex >> (0 * 8)) & 0XFF));
 }
-
-int random_int_range(int low, int high) {
-
-	return rand() % (high - low) + low;
-}
-
-Dir random_dir(void) {
-	return (Dir) random_int_range(0, 4);
-}
-
 
 void triangle(SDL_Renderer *renderer, SDL_FPoint points[3]) {
 
@@ -216,46 +188,20 @@ int main(int c, char **argv) {
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-				case SDL_KEYDOWN:
-					agent_speed.x = 0;
-					agent_speed.y = 0;
-
-					switch ( event.key.keysym.sym ) {
-					case SDLK_LEFT:
-						agent_speed.x -= AGENT_SPEED;
-						break;
-					case SDLK_RIGHT:
-						agent_speed.x += AGENT_SPEED;
-						break;
-					case SDLK_UP:
-						agent_speed.y -= AGENT_SPEED;
-						break;
-					case SDLK_DOWN:
-						agent_speed.y += AGENT_SPEED;
-						break;
-					default:
-						break;
-
-					}
-					//apply_force(&a1, agent_speed);
-					break;
 				case SDL_QUIT:
 					quit = 1;
 					break;
 			}
 		}
 		
-
 		SDL_GetMouseState(&pos_x, &pos_y);
-		//printf("%d %d %f %f\n", pos_x, pos_y, a1.shape.vertices[0].position.x, a1.shape.vertices[0].position.y);
+		
 		mouse_pos.x = pos_x;
 		mouse_pos.y = pos_y;
 		
 		seek_force.x = mouse_pos.x - a1.pivot.x;
 		seek_force.y = mouse_pos.y - a1.pivot.y; 
 		
-	    //printf("mouse "V_FMT, V_ARG(mouse_pos));
-	    //printf("frce "V_FMT, V_ARG(seek_force));
 		set_mag(&seek_force, 0.001);
 		apply_force(&a1, seek_force);
 

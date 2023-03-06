@@ -14,7 +14,6 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
 
-
 typedef struct{
 	int p_count;
 	SDL_Vertex vertices[3];
@@ -176,15 +175,21 @@ int main(int c, char **argv) {
 		SCREEN_HEIGHT));
 
 	int quit = 0;
-	Agent_t a1 = init_agent((Vector2D_t){400, 400});
+	const int agent_count = 10;
+
+	Vector2D_t tmp;
+
+	Agent_t agents[agent_count];
+	for (int i =0; i< agent_count ; i++) {
+		vect_get_random(&tmp, 20, 600);
+		agents[i] = init_agent(tmp);
+	}
+	
 	while (!quit) {
 		SDL_Event event;
-		Vector2D_t agent_speed = {0, 0};
 		Vector2D_t mouse_pos = {0, 0};
-		Vector2D_t seek_force = {0, 0};
 		int pos_x  = 0;
 		int pos_y  = 0;
-
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -194,24 +199,28 @@ int main(int c, char **argv) {
 			}
 		}
 		
+
+		sdl_set_color_hex(renderer, BACKGROUND_CLR);
+		scc(SDL_RenderClear(renderer));	
+
 		SDL_GetMouseState(&pos_x, &pos_y);
 		
 		mouse_pos.x = pos_x;
 		mouse_pos.y = pos_y;
 		
-		seek_force.x = mouse_pos.x - a1.pivot.x;
-		seek_force.y = mouse_pos.y - a1.pivot.y; 
+		for (int i = 0; i< agent_count ; i++) {
+			Vector2D_t seek_force = {0, 0};
+			seek_force.x = mouse_pos.x - agents[i].pivot.x;
+			seek_force.y = mouse_pos.y - agents[i].pivot.y;
+
+			set_mag(&seek_force, 0.001);
+			apply_force(&agents[i], seek_force);
+			
+			render_agent(renderer, &agents[i]);
+			update_agent(&agents[i]);
+
+		}
 		
-		set_mag(&seek_force, 0.001);
-		apply_force(&a1, seek_force);
-
-
-		sdl_set_color_hex(renderer, BACKGROUND_CLR);
-		scc(SDL_RenderClear(renderer));	
-
-		render_agent(renderer, &a1);
-		update_agent(&a1);
-
 		SDL_RenderPresent(renderer);
 	}
 

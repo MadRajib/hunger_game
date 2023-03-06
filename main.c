@@ -151,13 +151,13 @@ void apply_force(Agent_t *agent, Vector2D_t force) {
 	agent->acc.y = force.y;
 }
 
-Agent_t init_agent(SDL_FPoint points[3]) {
+Agent_t init_agent(Vector2D_t pos) {
 
 	Agent_t agent;	
 	agent.speed.x = -1;
 	agent.speed.y = 1;
 
-	agent.pivot = (Vector2D_t){400, 400};
+	agent.pivot = pos;
 
 	Triangle_t tri;
 
@@ -204,8 +204,7 @@ int main(int c, char **argv) {
 		SCREEN_HEIGHT));
 
 	int quit = 0;
-	SDL_FPoint vertexs [3]  = {{640,480},{580,540}, {700,540}};
-	Agent_t a1 = init_agent(vertexs);
+	Agent_t a1 = init_agent((Vector2D_t){400, 400});
 	while (!quit) {
 		SDL_Event event;
 		Vector2D_t agent_speed = {0, 0};

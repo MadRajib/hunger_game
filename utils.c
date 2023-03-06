@@ -1,6 +1,11 @@
 #include "utils.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+int random_int_range(int low, int high) {
+	return rand() % (high - low) + low;
+}
 
 void rotate(Vector2D_t *vect, float radians, Vector2D_t pivot) {
 	float x = cosf(radians) * (vect->x - pivot.x) - sinf(radians) * (vect->y - pivot.y) + pivot.x ;
@@ -48,3 +53,12 @@ void vect_sub(Vector2D_t *from, Vector2D_t *vec) {
    from->x -= vec->x;
    from->y -= vec->y;
 }
+
+void vect_get_random(Vector2D_t *vec, int _min, int _max) {
+	vec->x = random_int_range(_min, _max);	
+	vec->y = random_int_range(_min, _max);
+}
+
+
+
+

@@ -21,4 +21,6 @@ float angle_between(Vector2D_t *v1, Vector2D_t *v2);
 void vect_add(Vector2D_t *to, Vector2D_t *vec);
 void vect_sub(Vector2D_t *from, Vector2D_t *vec);
 void vect_get_random(Vector2D_t *vec, int _min, int _max); 
+void vect_sub(Vector2D_t *from, Vector2D_t *vec);
+Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2);
 #endif

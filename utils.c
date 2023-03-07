@@ -53,9 +53,17 @@ void vect_add(Vector2D_t *to, Vector2D_t *vec) {
    to->y += vec->y;
 }
 
+Vector2D_t add_vect(Vector2D_t *v1, Vector2D_t *v2) {
+	return (Vector2D_t){v1->x + v2->x, v1->y + v2->y};
+}
+
 void vect_sub(Vector2D_t *from, Vector2D_t *vec) {
    from->x -= vec->x;
    from->y -= vec->y;
+}
+
+Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2) {
+	return (Vector2D_t){v1->x - v2->x, v1->y - v2->y};
 }
 
 void vect_get_random(Vector2D_t *vec, int _min, int _max) {

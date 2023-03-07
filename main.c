@@ -178,6 +178,16 @@ int mouse_inside_window(Vector2D_t *pos){
 }
 
 int main(int c, char **argv) {
+	
+	Vector2D_t mouse_pos = {0, 0};
+	Vector2D_t seek_force;
+
+	int quit = 0;
+	const int agent_count = 50;
+
+	Vector2D_t tmp;
+
+	Agent_t agents[agent_count];
 
 	scc(SDL_Init(SDL_INIT_VIDEO));
 
@@ -196,12 +206,6 @@ int main(int c, char **argv) {
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT));
 
-	int quit = 0;
-	const int agent_count = 50;
-
-	Vector2D_t tmp;
-
-	Agent_t agents[agent_count];
 
 
 	srand(time(0));
@@ -210,9 +214,9 @@ int main(int c, char **argv) {
 		agents[i] = init_agent(tmp);
 	}
 	
+	
 	while (!quit) {
 		SDL_Event event;
-		Vector2D_t mouse_pos = {0, 0};
 		int pos_x  = 0;
 		int pos_y  = 0;
 		
@@ -242,10 +246,8 @@ int main(int c, char **argv) {
 		long int c = 0;
 		
 		for (int i = 0; i< agent_count ; i++) {
-			Vector2D_t seek_force = {0, 0};
-			seek_force.x = mouse_pos.x - agents[i].pivot.x;
-			seek_force.y = mouse_pos.y - agents[i].pivot.y;
-			
+			seek_force = sub_vect(&mouse_pos, &agents[i].pivot);
+
 			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 200){
 				set_mag(&seek_force, 0.001);
 				apply_force(&agents[i], seek_force);

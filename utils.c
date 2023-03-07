@@ -44,8 +44,7 @@ void limit_mag(Vector2D_t *vect, float mag) {
 float angle_between(Vector2D_t *v1, Vector2D_t *v2) {	
 	float dot = v1->x * v2->x + v1->y*v2->y;
 	float det = v1->x*v2->y - v1->y*v2->x;
-	return atan2(det, dot);
-	
+	return atan2(det, dot);	
 }
 
 void vect_add(Vector2D_t *to, Vector2D_t *vec) {

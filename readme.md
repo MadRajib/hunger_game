@@ -1,8 +1,12 @@
 ## Hunger Games
 
+### To clone
+```bash
+git clone https://github.com/MadRajib/hunger_game.git
+```
 ### Build the project
 ```bash
-$ cd HUNGER_GAME
+$ cd hunger_game
 $ make
 ```
 

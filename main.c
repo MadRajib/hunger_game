@@ -105,6 +105,22 @@ void update_agent(Agent_t *agent) {
 	vect_add(&agent->speed, &agent->acc);
 	limit_mag(&(agent->speed) , 0.04);
 	vect_add(&agent->pivot, &agent->speed);
+	/*filp direction if reached boundary*/
+	if(agent->pivot.x < 0.0001) {
+		agent->pivot.x = 1;
+		agent->speed.x = random_float_range(0.0001, 0.029);
+	}else if(agent->pivot.x > SCREEN_WIDTH) {
+		agent->pivot.x = SCREEN_WIDTH -1;
+		agent->speed.x = random_float_range(-0.028, 0.0001);
+	}
+
+	if(agent->pivot.y < 0.0001) {
+		agent->pivot.y = 1;
+		agent->speed.y = random_float_range(0.0001, 0.029);
+	}else if(agent->pivot.y > SCREEN_HEIGHT) {
+		agent->pivot.y = SCREEN_HEIGHT -1;
+		agent->speed.y = random_float_range(-0.028, 0.0001);
+	}
 	
 	agent->shape.vertices[0].position = (SDL_FPoint){ agent->pivot.x + 10, agent->pivot.y};
 	agent->shape.vertices[1].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y - 8};
@@ -155,6 +171,11 @@ Agent_t init_agent(Vector2D_t pos) {
 	//SDL_RenderGeometry(renderer, NULL, tri.vertices, 3, NULL , 3);
 }
 
+int mouse_inside_window(Vector2D_t *pos){
+	if(pos->x <= 0 || pos->y <= 0 || pos->x >= (SCREEN_WIDTH *0.98) || pos->y >= (SCREEN_HEIGHT*0.98))
+		return 0;
+	return 1;
+}
 
 int main(int c, char **argv) {
 
@@ -225,13 +246,12 @@ int main(int c, char **argv) {
 			seek_force.x = mouse_pos.x - agents[i].pivot.x;
 			seek_force.y = mouse_pos.y - agents[i].pivot.y;
 			
-			if(get_mag(&seek_force) < 200) {
+			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 200){
 				set_mag(&seek_force, 0.001);
 				apply_force(&agents[i], seek_force);
 			}
 			
 			render_agent(renderer, &agents[i]);
-			if(get_mag(&agents[i].speed) < 0.0000001) continue;
 			update_agent(&agents[i]);
 
 		}

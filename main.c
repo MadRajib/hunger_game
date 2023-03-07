@@ -3,10 +3,10 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h> 
 #include <assert.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 
 #include "./style.h"
 #include "utils.h"
@@ -101,10 +101,9 @@ void update_agent(Agent_t *agent) {
 
 	Vector2D_t prev_speed;
 	prev_speed = agent->speed;
-	
+
 	vect_add(&agent->speed, &agent->acc);
 	limit_mag(&(agent->speed) , 0.04);
-
 	vect_add(&agent->pivot, &agent->speed);
 	
 	agent->shape.vertices[0].position = (SDL_FPoint){ agent->pivot.x + 10, agent->pivot.y};
@@ -125,8 +124,10 @@ void apply_force(Agent_t *agent, Vector2D_t force) {
 Agent_t init_agent(Vector2D_t pos) {
 
 	Agent_t agent;	
-	agent.speed.x = -1;
-	agent.speed.y = 1;
+	
+	agent.speed.x = random_float_range(-0.028, 0.029) ;
+	agent.speed.y = random_float_range(-0.028, 0.029) ;
+	agent.acc = (Vector2D_t){0,0};
 
 	agent.pivot = pos;
 
@@ -156,7 +157,7 @@ Agent_t init_agent(Vector2D_t pos) {
 
 
 int main(int c, char **argv) {
-	
+
 	scc(SDL_Init(SDL_INIT_VIDEO));
 
 	SDL_Window *window = scp(SDL_CreateWindow(
@@ -175,12 +176,15 @@ int main(int c, char **argv) {
 		SCREEN_HEIGHT));
 
 	int quit = 0;
-	const int agent_count = 10;
+	const int agent_count = 15;
 
 	Vector2D_t tmp;
 
 	Agent_t agents[agent_count];
-	for (int i =0; i< agent_count ; i++) {
+
+
+	srand(time(0));
+	for (int i =0; i< agent_count ; i++) {	
 		vect_get_random(&tmp, 20, 600);
 		agents[i] = init_agent(tmp);
 	}
@@ -193,9 +197,15 @@ int main(int c, char **argv) {
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-				case SDL_QUIT:
-					quit = 1;
-					break;
+			case SDL_KEYDOWN:
+					switch ( event.key.keysym.sym ) {
+					case SDLK_LEFT:
+						quit = 1;
+						break;
+					case SDL_QUIT:
+						quit = 1;
+						break;
+					}
 			}
 		}
 		
@@ -207,16 +217,21 @@ int main(int c, char **argv) {
 		
 		mouse_pos.x = pos_x;
 		mouse_pos.y = pos_y;
+
+		long int c = 0;
 		
 		for (int i = 0; i< agent_count ; i++) {
 			Vector2D_t seek_force = {0, 0};
 			seek_force.x = mouse_pos.x - agents[i].pivot.x;
 			seek_force.y = mouse_pos.y - agents[i].pivot.y;
-
-			set_mag(&seek_force, 0.001);
-			apply_force(&agents[i], seek_force);
+			
+			if(get_mag(&seek_force) < 200) {
+				set_mag(&seek_force, 0.001);
+				apply_force(&agents[i], seek_force);
+			}
 			
 			render_agent(renderer, &agents[i]);
+			if(get_mag(&agents[i].speed) < 0.0000001) continue;
 			update_agent(&agents[i]);
 
 		}

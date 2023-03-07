@@ -7,6 +7,10 @@ int random_int_range(int low, int high) {
 	return rand() % (high - low) + low;
 }
 
+float random_float_range(float LO, float HI) {
+	return LO + (float) (rand()) /( (float) (RAND_MAX/(HI-LO)));
+}
+
 void rotate(Vector2D_t *vect, float radians, Vector2D_t pivot) {
 	float x = cosf(radians) * (vect->x - pivot.x) - sinf(radians) * (vect->y - pivot.y) + pivot.x ;
 	float y = sinf(radians) * (vect->x - pivot.x) + cosf(radians) * (vect->y - pivot.y) + pivot.y ; 
@@ -18,7 +22,7 @@ void rotate(Vector2D_t *vect, float radians, Vector2D_t pivot) {
 float get_angle(Vector2D_t *vect) {
 	//if (vect->x == 0) return (vect->y > 0)?90:-90;
 	if (vect->y == 0 && vect->x ==0 ) return 0;
-	return  atan2(vect->y, vect->x);
+	return  atan2(100 * vect->y, 100 * vect->x);
 }
 
 float get_mag(Vector2D_t *vect) {

@@ -8,6 +8,8 @@ typedef struct{
 
 #define V_FMT "%f %f\n"
 #define V_ARG(arg) arg.x, arg.y
+int random_int_range(int low, int high);
+float random_float_range(float LO, float HI);
 
 void rotate(Vector2D_t *vect, float angle, Vector2D_t pivot);
 float get_angle(Vector2D_t *vect);

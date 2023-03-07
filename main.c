@@ -222,15 +222,15 @@ int main(int c, char **argv) {
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-			case SDL_KEYDOWN:
+				case SDL_KEYDOWN:
 					switch ( event.key.keysym.sym ) {
-					case SDLK_LEFT:
-						quit = 1;
-						break;
-					case SDL_QUIT:
-						quit = 1;
-						break;
+						case SDLK_q:
+							quit = 1;
+							break;
 					}
+				case SDL_QUIT:
+					quit = 1;
+					break;
 			}
 		}
 		

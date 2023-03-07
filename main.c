@@ -183,7 +183,7 @@ int main(int c, char **argv) {
 	Vector2D_t seek_force;
 
 	int quit = 0;
-	const int agent_count = 50;
+	const int agent_count = 100;
 
 	Vector2D_t tmp;
 
@@ -248,9 +248,9 @@ int main(int c, char **argv) {
 		for (int i = 0; i< agent_count ; i++) {
 			seek_force = sub_vect(&mouse_pos, &agents[i].pivot);
 
-			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 200){
+			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 100){
 				set_mag(&seek_force, 0.001);
-				apply_force(&agents[i], seek_force);
+				apply_force(&agents[i], scalar_mult_vect(&seek_force, -1));
 			}
 			
 			render_agent(renderer, &agents[i]);

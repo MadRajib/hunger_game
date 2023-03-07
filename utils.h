@@ -23,4 +23,6 @@ void vect_sub(Vector2D_t *from, Vector2D_t *vec);
 void vect_get_random(Vector2D_t *vec, int _min, int _max); 
 Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t add_vect(Vector2D_t *v1, Vector2D_t *v2);
+Vector2D_t dot_vect(Vector2D_t *v1, Vector2D_t *v2);
+Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val);
 #endif

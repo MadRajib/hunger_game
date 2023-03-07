@@ -65,6 +65,14 @@ Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2) {
 	return (Vector2D_t){v1->x - v2->x, v1->y - v2->y};
 }
 
+Vector2D_t dot_vect(Vector2D_t *v1, Vector2D_t *v2) {
+	return (Vector2D_t){v1->x * v2->x, v1->y * v2->y};
+}
+
+Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val) {
+	return (Vector2D_t){v1->x * val, v1->y * val};
+}
+
 void vect_get_random(Vector2D_t *vec, int _min, int _max) {
 	vec->x = random_int_range(_min, _max);	
 	vec->y = random_int_range(_min, _max);

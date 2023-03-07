@@ -107,18 +107,18 @@ void update_agent(Agent_t *agent) {
 	vect_add(&agent->pivot, &agent->speed);
 	/*filp direction if reached boundary*/
 	if(agent->pivot.x < 0.0001) {
-		agent->pivot.x = 1;
 		agent->speed.x = random_float_range(0.0001, 0.029);
+		agent->speed.y = random_float_range(-0.028, 0.029);
 	}else if(agent->pivot.x > SCREEN_WIDTH) {
-		agent->pivot.x = SCREEN_WIDTH -1;
 		agent->speed.x = random_float_range(-0.028, 0.0001);
+		agent->speed.y = random_float_range(-0.028, 0.029);
 	}
 
 	if(agent->pivot.y < 0.0001) {
-		agent->pivot.y = 1;
+		agent->speed.x = random_float_range(-0.028, 0.029);
 		agent->speed.y = random_float_range(0.0001, 0.029);
 	}else if(agent->pivot.y > SCREEN_HEIGHT) {
-		agent->pivot.y = SCREEN_HEIGHT -1;
+		agent->speed.x = random_float_range(-0.028, 0.029);
 		agent->speed.y = random_float_range(-0.028, 0.0001);
 	}
 	
@@ -197,7 +197,7 @@ int main(int c, char **argv) {
 		SCREEN_HEIGHT));
 
 	int quit = 0;
-	const int agent_count = 15;
+	const int agent_count = 50;
 
 	Vector2D_t tmp;
 

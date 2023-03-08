@@ -7,7 +7,7 @@ typedef struct{
 }Vector2D_t;
 
 typedef struct{
-	unsigned int row, col;
+	unsigned int row, col, count;
 	float *data;
 }Matrix_t;
 
@@ -33,6 +33,7 @@ Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val);
 
 /*Matrix apis*/
 Matrix_t matrix_init(int rows, int cols);
+Matrix_t matrix_init_data(int rows, int cols, float *data, int data_len);
 Matrix_t matrix_transpose(Matrix_t *m_1);
 Matrix_t matrix_multiply(Matrix_t *m1, Matrix_t *m2);
 void matrix_print(Matrix_t m);

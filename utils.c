@@ -95,10 +95,25 @@ void vect_get_random(Vector2D_t *vec, int _min, int _max) {
 
 Matrix_t matrix_init(int rows, int cols) {
 	Matrix_t mat;
+	int data_len;
 
 	mat.row = rows;
 	mat.col = cols;
-	mat.data = calloc(mat.row * mat.col, sizeof(float));
+	mat.count = mat.row * mat.col;
+	mat.data = calloc(mat.count, sizeof(float));
+
+	return mat;
+}
+
+
+Matrix_t matrix_init_data(int rows, int cols, float *data, int data_len) {
+	Matrix_t mat;
+
+	mat = matrix_init(rows, cols);
+
+	for (int i = 0; (i < mat.count && i < data_len) ; i++) {
+		mat.data[i] = data[i];
+	}
 
 	return mat;
 }
@@ -122,24 +137,24 @@ Matrix_t matrix_transpose(Matrix_t *m_1) {
 
 Matrix_t matrix_multiply(Matrix_t *m1, Matrix_t *m2) {
 	Matrix_t mat;
-	mat.row = mat.col = -1;
-	Matrix_t transpose = matrix_transpose(m2); 
+	mat.row = mat.col = -1; 
 
-	if(m1->col != transpose.row)
+	if(m1->col != m2->row)
 		return mat;
-	mat.row = mat.row;
-	mat.col = transpose.col;
+	mat.row = m1->row;
+	mat.col = m2->col;
 
 	mat.data = calloc(mat.row * mat.col, sizeof(float));
 	size_t count = 0;
 	for(int i = 0; i < m1->row; i++ ) {
-		for(int j = 0; j < transpose.col; j++ ) {
+		for(int j = 0; j < m2->col; j++ ) {
 			int sum = 0;
-			for (int k =0; i < transpose.row ; k++) {
+			for (int k =0; k < m2->row ; k++) {
 				int m1_indx = k + (m1->col * i);
-				int m2_indx = k + (transpose.row * j);
-				mat.data[count++] = sum + m1->data[m1_indx] * transpose.data[m2_indx]; 
+				int m2_indx = k + (m2->row * j);
+				sum += m1->data[m1_indx] * m2->data[m2_indx]; 
 			}
+			mat.data[count++] = sum;
 		}
 	}
 	return mat;
@@ -155,6 +170,8 @@ void matrix_print(Matrix_t m) {
 		}
 		printf("\n");
 	}
+
+	printf("\n");
 }
 
 

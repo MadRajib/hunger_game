@@ -267,7 +267,7 @@ int main_gp() {
 } 
 
 
-void main_test_tanspose() {
+void test_matrix_tanspose() {
 	Matrix_t mat;
 	mat.row = 1;
 	mat.col = 2;
@@ -301,8 +301,42 @@ void main_test_tanspose() {
 	mat.data = NULL;
 }
 
+void test_matrix_multiply(){
+
+	Matrix_t mat_1, mat_2;
+	mat_1 = matrix_init_data(1, 2, (float []){1,2}, 2);
+	mat_2 = matrix_init_data(2, 1, (float []){3,4}, 2);
+
+	matrix_print(mat_1);
+	matrix_print(mat_2);
+
+	free(mat_1.data);
+	free(mat_2.data);
+	mat_1.data = NULL;
+	mat_2.data = NULL;
+
+	mat_1 = matrix_init_data(2, 2, (float []){1,2, 3, 4} ,4);
+	mat_2 = matrix_init_data(2, 2, (float []){5,6, 7, 8}, 4);
+
+	matrix_print(mat_1);
+	matrix_print(mat_2);
+	
+	Matrix_t ret = matrix_multiply(&mat_1, &mat_2);
+
+	matrix_print(ret);
+
+	free(mat_1.data);
+	free(mat_2.data);
+	mat_1.data = NULL;
+	mat_2.data = NULL;
+
+
+	
+}
+
 
 int main(int c, char **argv) {
 	//main_gp();
-	main_test_tanspose();
+	//test_matrix_tanspose();
+	test_matrix_multiply();
 }

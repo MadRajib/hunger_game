@@ -95,7 +95,6 @@ void vect_get_random(Vector2D_t *vec, int _min, int _max) {
 
 Matrix_t matrix_init(int rows, int cols) {
 	Matrix_t mat;
-	int data_len;
 
 	mat.row = rows;
 	mat.col = cols;

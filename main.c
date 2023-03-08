@@ -62,9 +62,6 @@ void triangle(SDL_Renderer *renderer, SDL_FPoint points[3]) {
 
 	Triangle_t tri;
 
-	float g_x = 0;
-	float g_y = 0;
-
 	for (int i =0; i< 3; i++) {
 		tri.vertices[i].position = points[i];
 		tri.vertices[i].color = (struct SDL_Color){255,255,255};
@@ -100,8 +97,6 @@ void render_agent(SDL_Renderer *renderer, Agent_t *agent) {
 
 void update_agent(Agent_t *agent) {
 
-	Vector2D_t prev_speed;
-	prev_speed = agent->speed;
 
 	vect_add(&agent->speed, &agent->acc);
 	limit_mag(&(agent->speed) , 0.04);
@@ -149,9 +144,6 @@ Agent_t init_agent(Vector2D_t pos) {
 	agent.pivot = pos;
 
 	Triangle_t tri;
-
-	float g_x = 0;
-	float g_y = 0;
 
 	tri.vertices[0].position = (SDL_FPoint){ agent.pivot.x + 10, agent.pivot.y};
 	tri.vertices[1].position = (SDL_FPoint){ agent.pivot.x - 10, agent.pivot.y - 8};
@@ -243,9 +235,7 @@ int main_gp() {
 		
 		mouse_pos.x = pos_x;
 		mouse_pos.y = pos_y;
-
-		long int c = 0;
-		
+	
 		for (int i = 0; i< agent_count ; i++) {
 			seek_force = sub_vect(&mouse_pos, &agents[i].pivot);
 
@@ -329,10 +319,7 @@ void test_matrix_multiply(){
 	free(mat_2.data);
 	mat_1.data = NULL;
 	mat_2.data = NULL;
-
-
-	
-}
+	}
 
 
 int main(int c, char **argv) {

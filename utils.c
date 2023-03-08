@@ -93,7 +93,16 @@ void vect_get_random(Vector2D_t *vec, int _min, int _max) {
 	mat.data = NULL;
 */
 
-Matrix_t transpose(Matrix_t *m_1) {
+Matrix_t matrix_init(int rows, int cols) {
+	Matrix_t mat;
+
+	mat.row = rows;
+	mat.col = cols;
+	mat.data = calloc(mat.row * mat.col, sizeof(float));
+
+	return mat;
+}
+Matrix_t matrix_transpose(Matrix_t *m_1) {
 	Matrix_t mat;
 	mat.row = m_1->col;
 	mat.col = m_1->row;
@@ -111,7 +120,33 @@ Matrix_t transpose(Matrix_t *m_1) {
 	return mat;
 }
 
-void print_matrix(Matrix_t m) {
+Matrix_t matrix_multiply(Matrix_t *m1, Matrix_t *m2) {
+	Matrix_t mat;
+	mat.row = mat.col = -1;
+	Matrix_t transpose = matrix_transpose(m2); 
+
+	if(m1->col != transpose.row)
+		return mat;
+	mat.row = mat.row;
+	mat.col = transpose.col;
+
+	mat.data = calloc(mat.row * mat.col, sizeof(float));
+	size_t count = 0;
+	for(int i = 0; i < m1->row; i++ ) {
+		for(int j = 0; j < transpose.col; j++ ) {
+			int sum = 0;
+			for (int k =0; i < transpose.row ; k++) {
+				int m1_indx = k + (m1->col * i);
+				int m2_indx = k + (transpose.row * j);
+				mat.data[count++] = sum + m1->data[m1_indx] * transpose.data[m2_indx]; 
+			}
+		}
+	}
+	return mat;
+
+}
+
+void matrix_print(Matrix_t m) {
 
 	for(int i =0; i< m.row ;i++) {
 		for(int j = 0; j< m.col;j++) {

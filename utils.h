@@ -30,6 +30,10 @@ Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t add_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t dot_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val);
-Matrix_t transpose(Matrix_t *m_1);
-void print_matrix(Matrix_t m);
+
+/*Matrix apis*/
+Matrix_t matrix_init(int rows, int cols);
+Matrix_t matrix_transpose(Matrix_t *m_1);
+Matrix_t matrix_multiply(Matrix_t *m1, Matrix_t *m2);
+void matrix_print(Matrix_t m);
 #endif

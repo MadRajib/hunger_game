@@ -276,8 +276,8 @@ void main_test_tanspose() {
 	mat.data[0] = 1;
 	mat.data[1] = 2;
 
-	print_matrix(mat);
-	print_matrix(transpose(&mat));
+	matrix_print(mat);
+	matrix_print(matrix_transpose(&mat));
 
 	free(mat.data);
 	mat.data = NULL;
@@ -294,8 +294,8 @@ void main_test_tanspose() {
 	mat.data[4] = 5;
 	mat.data[5] = 6;
 
-	print_matrix(mat);
-	print_matrix(transpose(&mat));
+	matrix_print(mat);
+	matrix_print(matrix_transpose(&mat));
 
 	free(mat.data);
 	mat.data = NULL;

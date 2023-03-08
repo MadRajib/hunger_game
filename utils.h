@@ -33,7 +33,6 @@ Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val);
 Vector2D_t vect_scalar_multiply(Vector2D_t *v1, float val);
 void vect_scalar_multiply_inplace(Vector2D_t *v1, float val);
 
-
 /*Matrix apis*/
 Matrix_t matrix_init(int rows, int cols);
 Matrix_t matrix_init_data(int rows, int cols, float *data, int data_len);

@@ -3,6 +3,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <math.h>
+#include <stdarg.h>
 #include <stdio.h> 
 #include <assert.h>
 #include <SDL2/SDL.h>
@@ -95,27 +96,29 @@ void render_agent(SDL_Renderer *renderer, Agent_t *agent) {
 }
 
 
-void update_agent(Agent_t *agent) {
+void update_agent(Agent_t *agent, float delta) {
 
-
-	vect_add(&agent->speed, &agent->acc);
-	limit_mag(&(agent->speed) , 0.04);
 	vect_add(&agent->pivot, &agent->speed);
+
 	/*filp direction if reached boundary*/
 	if(agent->pivot.x < 0.0001) {
 		agent->speed.x = random_float_range(0.0001, 0.029);
 		agent->speed.y = random_float_range(-0.028, 0.029);
+		agent->pivot.x = 1;
 	}else if(agent->pivot.x > SCREEN_WIDTH) {
 		agent->speed.x = random_float_range(-0.028, 0.0001);
 		agent->speed.y = random_float_range(-0.028, 0.029);
+		agent->pivot.x = SCREEN_WIDTH -1;
 	}
 
 	if(agent->pivot.y < 0.0001) {
 		agent->speed.x = random_float_range(-0.028, 0.029);
-		agent->speed.y = random_float_range(0.0001, 0.029);
+		agent->speed.y = random_float_range(0.0001, 0.029);	
+		agent->pivot.y = 1;
 	}else if(agent->pivot.y > SCREEN_HEIGHT) {
 		agent->speed.x = random_float_range(-0.028, 0.029);
 		agent->speed.y = random_float_range(-0.028, 0.0001);
+		agent->pivot.y = SCREEN_HEIGHT -1;
 	}
 	
 	agent->shape.vertices[0].position = (SDL_FPoint){ agent->pivot.x + 10, agent->pivot.y};
@@ -123,14 +126,14 @@ void update_agent(Agent_t *agent) {
 	agent->shape.vertices[2].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y + 8};
 	
 	rotate_agent(agent, get_angle(&agent->speed));	
-	
-	agent->acc.x = 0;
-	agent->acc.y = 0;
 }
 
 void apply_force(Agent_t *agent, Vector2D_t force) {
 	agent->acc.x = force.x;
 	agent->acc.y = force.y;
+	
+	vect_add(&agent->speed, &agent->acc);
+	limit_mag(&(agent->speed) , 0.08);
 }
 
 Agent_t init_agent(Vector2D_t pos) {
@@ -158,7 +161,6 @@ Agent_t init_agent(Vector2D_t pos) {
 
 	rotate_agent(&agent, get_angle(&agent.speed));
 
-
 	return agent;
 	
 	//SDL_RenderGeometry(renderer, NULL, tri.vertices, 3, NULL , 3);
@@ -181,6 +183,8 @@ int main_gp() {
 	Vector2D_t tmp;
 
 	Agent_t agents[agent_count];
+	clock_t p_clk, delta;
+	float timescale = 1;
 
 	scc(SDL_Init(SDL_INIT_VIDEO));
 
@@ -200,14 +204,15 @@ int main_gp() {
 		SCREEN_HEIGHT));
 
 
-
 	srand(time(0));
+
 	for (int i =0; i< agent_count ; i++) {	
 		vect_get_random(&tmp, 20, 600);
 		agents[i] = init_agent(tmp);
 	}
 	
-	
+	p_clk = clock();
+
 	while (!quit) {
 		SDL_Event event;
 		int pos_x  = 0;
@@ -226,7 +231,9 @@ int main_gp() {
 					break;
 			}
 		}
-		
+
+		delta = clock() - p_clk;
+		p_clk = clock();
 
 		sdl_set_color_hex(renderer, BACKGROUND_CLR);
 		scc(SDL_RenderClear(renderer));	
@@ -241,15 +248,18 @@ int main_gp() {
 
 			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 100){
 				set_mag(&seek_force, 0.001);
-				apply_force(&agents[i], scalar_mult_vect(&seek_force, -1));
+				apply_force(&agents[i], vect_scalar_multiply(&seek_force, 1));
 			}
 			
-			render_agent(renderer, &agents[i]);
-			update_agent(&agents[i]);
-
+			update_agent(&agents[i], delta*timescale);
 		}
 		
+		for (int i = 0; i< agent_count ; i++) {
+			render_agent(renderer, &agents[i]);
+		}
+
 		SDL_RenderPresent(renderer);
+		
 	}
 
 	SDL_Quit();
@@ -323,7 +333,7 @@ void test_matrix_multiply(){
 
 
 int main(int c, char **argv) {
-	//main_gp();
+	main_gp();
 	//test_matrix_tanspose();
-	test_matrix_multiply();
+	//test_matrix_multiply();
 }

@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <math.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -77,7 +78,49 @@ void vect_get_random(Vector2D_t *vec, int _min, int _max) {
 	vec->x = random_int_range(_min, _max);	
 	vec->y = random_int_range(_min, _max);
 }
+/*
+	Matrix_t mat;
+	mat.row = 2;
+	mat.col = 2;
 
+	mat.data = calloc(mat.row * mat.col, sizeof(float));
+	mat.data[3] = mat.data[0] = cosf(radian);	
+	mat.data[2] = sinf(radian);	
+	mat.data[1] = -1 * mat.data[3];
+
+
+	free(mat.data);
+	mat.data = NULL;
+*/
+
+Matrix_t transpose(Matrix_t *m_1) {
+	Matrix_t mat;
+	mat.row = m_1->col;
+	mat.col = m_1->row;
+
+	mat.data = calloc(mat.row * mat.col, sizeof(float));
+	size_t count = 0;
+	for (int c=0; c < m_1->col ; c++) {
+		for( int r= 0; r < m_1->row; r++) {
+			int indx = c + (r*m_1->col);
+			mat.data[count] = m_1->data[indx];
+			count++;
+		}
+	}
+
+	return mat;
+}
+
+void print_matrix(Matrix_t m) {
+
+	for(int i =0; i< m.row ;i++) {
+		for(int j = 0; j< m.col;j++) {
+			int indx = i*m.col + j;
+			printf("%f ",m.data[indx]);
+		}
+		printf("\n");
+	}
+}
 
 
 

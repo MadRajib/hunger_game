@@ -6,6 +6,11 @@ typedef struct{
 	float y;
 }Vector2D_t;
 
+typedef struct{
+	unsigned int row, col;
+	float *data;
+}Matrix_t;
+
 #define V_FMT "%f %f\n"
 #define V_ARG(arg) arg.x, arg.y
 int random_int_range(int low, int high);
@@ -25,4 +30,6 @@ Vector2D_t sub_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t add_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t dot_vect(Vector2D_t *v1, Vector2D_t *v2);
 Vector2D_t scalar_mult_vect(Vector2D_t *v1, float val);
+Matrix_t transpose(Matrix_t *m_1);
+void print_matrix(Matrix_t m);
 #endif

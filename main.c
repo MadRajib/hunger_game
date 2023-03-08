@@ -6,6 +6,7 @@
 #include <stdio.h> 
 #include <assert.h>
 #include <SDL2/SDL.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "./style.h"
@@ -177,7 +178,7 @@ int mouse_inside_window(Vector2D_t *pos){
 	return 1;
 }
 
-int main(int c, char **argv) {
+int main_gp() {
 	
 	Vector2D_t mouse_pos = {0, 0};
 	Vector2D_t seek_force;
@@ -264,3 +265,44 @@ int main(int c, char **argv) {
 	SDL_Quit();
 	return 0;
 } 
+
+
+void main_test_tanspose() {
+	Matrix_t mat;
+	mat.row = 1;
+	mat.col = 2;
+
+	mat.data = calloc(2, sizeof(float));
+	mat.data[0] = 1;
+	mat.data[1] = 2;
+
+	print_matrix(mat);
+	print_matrix(transpose(&mat));
+
+	free(mat.data);
+	mat.data = NULL;
+
+
+	mat.row = 2;
+	mat.col = 3;
+
+	mat.data = calloc(2*3, sizeof(float));
+	mat.data[0] = 1;
+	mat.data[1] = 2;
+	mat.data[2] = 3;
+	mat.data[3] = 4;
+	mat.data[4] = 5;
+	mat.data[5] = 6;
+
+	print_matrix(mat);
+	print_matrix(transpose(&mat));
+
+	free(mat.data);
+	mat.data = NULL;
+}
+
+
+int main(int c, char **argv) {
+	//main_gp();
+	main_test_tanspose();
+}

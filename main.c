@@ -10,31 +10,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "agent.h"
 #include "./style.h"
 #include "utils.h"
 #include "list.h"
-
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 800
-#define AGENT_MAX_SPEED 0.028
-#define AGENT_MAX_SPEED_LIMIT sqrt(2*(AGENT_MAX_SPEED*AGENT_MAX_SPEED))
-#define MAX_ATTRACK_FORCE 0.001
-#define MAX_ACTRACK_FORCE 100
-#define MAX_ACTRACK_FORCE_LIMIT 0.001
-
-typedef struct{
-	int p_count;
-	SDL_Vertex vertices[3];
-} Triangle_t;
-
-struct Agent_t;
-typedef struct{	
-	Triangle_t shape;
-	Vector2D_t speed;
-	Vector2D_t acc;
-	Vector2D_t head;
-	Vector2D_t pivot;
-} Agent_t;
+#include "config.h"
 
 /* error handlers */
 int scc(int code) {
@@ -65,112 +45,6 @@ void sdl_set_color_hex(SDL_Renderer *renderer, Uint32 hex) {
 		(hex >> (0 * 8)) & 0XFF));
 }
 
-void triangle(SDL_Renderer *renderer, SDL_FPoint points[3]) {
-
-	Triangle_t tri;
-
-	for (int i =0; i< 3; i++) {
-		tri.vertices[i].position = points[i];
-		tri.vertices[i].color = (struct SDL_Color){255,255,255};
-		tri.vertices[i].tex_coord = (struct SDL_FPoint) {1};
-
-	}
-	
-	SDL_RenderGeometry(renderer, NULL, tri.vertices, 3, NULL , 3);
-}
-
-
-
-void rotate_agent(Agent_t *agent, float angle) {
-	Vector2D_t pos;
-	
-	for (int i =0; i< 3; i++) {
-		pos.x = agent->shape.vertices[i].position.x;
-		pos.y = agent->shape.vertices[i].position.y;
-
-		rotate(&pos, angle, agent->pivot);
-
-		agent->shape.vertices[i].position.x = pos.x;
-		agent->shape.vertices[i].position.y = pos.y;
-
-	}
-}
-
-
-void render_agent(SDL_Renderer *renderer, Agent_t *agent) {
-	SDL_RenderGeometry(renderer, NULL, agent->shape.vertices, 3, NULL , 3);
-}
-
-
-void update_agent(Agent_t *agent, float delta) {
-
-	vect_add(&agent->pivot, &agent->speed);
-
-	/*filp direction if reached boundary*/
-	if(agent->pivot.x < 0.0001) {
-		agent->speed.x = random_float_range(0.0001, AGENT_MAX_SPEED);
-		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
-		agent->pivot.x = 1;
-	}else if(agent->pivot.x > SCREEN_WIDTH) {
-		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, 0.0001);
-		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
-		agent->pivot.x = SCREEN_WIDTH -1;
-	}
-
-	if(agent->pivot.y < 0.0001) {
-		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
-		agent->speed.y = random_float_range(0.0001, AGENT_MAX_SPEED);	
-		agent->pivot.y = 1;
-	}else if(agent->pivot.y > SCREEN_HEIGHT) {
-		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
-		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, 0.0001);
-		agent->pivot.y = SCREEN_HEIGHT -1;
-	}
-	
-	agent->shape.vertices[0].position = (SDL_FPoint){ agent->pivot.x + 10, agent->pivot.y};
-	agent->shape.vertices[1].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y - 8};
-	agent->shape.vertices[2].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y + 8};
-	
-	rotate_agent(agent, get_angle(&agent->speed));	
-}
-
-void apply_force(Agent_t *agent, Vector2D_t force) {
-	agent->acc.x = force.x;
-	agent->acc.y = force.y;
-	
-	vect_add(&agent->speed, &agent->acc);
-	limit_mag(&(agent->speed) , AGENT_MAX_SPEED_LIMIT);
-}
-
-Agent_t init_agent(Vector2D_t pos) {
-
-	Agent_t agent;	
-	
-	agent.speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
-	agent.speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
-	agent.acc = (Vector2D_t){0,0};
-
-	agent.pivot = pos;
-
-	Triangle_t tri;
-
-	tri.vertices[0].position = (SDL_FPoint){ agent.pivot.x + 10, agent.pivot.y};
-	tri.vertices[1].position = (SDL_FPoint){ agent.pivot.x - 10, agent.pivot.y - 8};
-	tri.vertices[2].position = (SDL_FPoint){ agent.pivot.x - 10, agent.pivot.y + 8};
-
-	for (int i =0; i< 3; i++) {
-		tri.vertices[i].color = (struct SDL_Color){255,255,255};
-		tri.vertices[i].tex_coord = (struct SDL_FPoint) {1};
-	}	
-
-	agent.shape = tri;
-
-	rotate_agent(&agent, get_angle(&agent.speed));
-
-	return agent;
-	
-	//SDL_RenderGeometry(renderer, NULL, tri.vertices, 3, NULL , 3);
-}
 
 int mouse_inside_window(Vector2D_t *pos){
 	if(pos->x <= 0 || pos->y <= 0 || pos->x >= (SCREEN_WIDTH *0.98) || pos->y >= (SCREEN_HEIGHT*0.98))
@@ -214,7 +88,7 @@ int main_gp() {
 
 	for (int i =0; i< agent_count ; i++) {	
 		vect_get_random(&tmp, 20, 600);
-		agents[i] = init_agent(tmp);
+		agents[i] = agent_init(tmp);
 	}
 	
 	p_clk = clock();
@@ -254,14 +128,14 @@ int main_gp() {
 
 			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 100){
 				set_mag(&seek_force, 0.001);
-				apply_force(&agents[i], vect_scalar_multiply(&seek_force, 1));
+				agent_apply_force(&agents[i], vect_scalar_multiply(&seek_force, 1));
 			}
 			
-			update_agent(&agents[i], delta*timescale);
+			agent_update(&agents[i], delta*timescale);
 		}
 		
 		for (int i = 0; i< agent_count ; i++) {
-			render_agent(renderer, &agents[i]);
+			agent_render(renderer, &agents[i]);
 		}
 
 		SDL_RenderPresent(renderer);

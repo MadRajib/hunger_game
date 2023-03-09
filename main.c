@@ -15,6 +15,11 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
+#define AGENT_MAX_SPEED 0.028
+#define AGENT_MAX_SPEED_LIMIT sqrt(2*(AGENT_MAX_SPEED*AGENT_MAX_SPEED))
+#define MAX_ATTRACK_FORCE 0.001
+#define MAX_ACTRACK_FORCE 100
+#define MAX_ACTRACK_FORCE_LIMIT 0.001
 
 typedef struct{
 	int p_count;
@@ -102,22 +107,22 @@ void update_agent(Agent_t *agent, float delta) {
 
 	/*filp direction if reached boundary*/
 	if(agent->pivot.x < 0.0001) {
-		agent->speed.x = random_float_range(0.0001, 0.029);
-		agent->speed.y = random_float_range(-0.028, 0.029);
+		agent->speed.x = random_float_range(0.0001, AGENT_MAX_SPEED);
+		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
 		agent->pivot.x = 1;
 	}else if(agent->pivot.x > SCREEN_WIDTH) {
-		agent->speed.x = random_float_range(-0.028, 0.0001);
-		agent->speed.y = random_float_range(-0.028, 0.029);
+		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, 0.0001);
+		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
 		agent->pivot.x = SCREEN_WIDTH -1;
 	}
 
 	if(agent->pivot.y < 0.0001) {
-		agent->speed.x = random_float_range(-0.028, 0.029);
-		agent->speed.y = random_float_range(0.0001, 0.029);	
+		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
+		agent->speed.y = random_float_range(0.0001, AGENT_MAX_SPEED);	
 		agent->pivot.y = 1;
 	}else if(agent->pivot.y > SCREEN_HEIGHT) {
-		agent->speed.x = random_float_range(-0.028, 0.029);
-		agent->speed.y = random_float_range(-0.028, 0.0001);
+		agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED);
+		agent->speed.y = random_float_range(-AGENT_MAX_SPEED, 0.0001);
 		agent->pivot.y = SCREEN_HEIGHT -1;
 	}
 	
@@ -133,15 +138,15 @@ void apply_force(Agent_t *agent, Vector2D_t force) {
 	agent->acc.y = force.y;
 	
 	vect_add(&agent->speed, &agent->acc);
-	limit_mag(&(agent->speed) , 0.08);
+	limit_mag(&(agent->speed) , AGENT_MAX_SPEED_LIMIT);
 }
 
 Agent_t init_agent(Vector2D_t pos) {
 
 	Agent_t agent;	
 	
-	agent.speed.x = random_float_range(-0.028, 0.029) ;
-	agent.speed.y = random_float_range(-0.028, 0.029) ;
+	agent.speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
+	agent.speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
 	agent.acc = (Vector2D_t){0,0};
 
 	agent.pivot = pos;

@@ -12,6 +12,7 @@
 
 #include "./style.h"
 #include "utils.h"
+#include "list.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800

@@ -6,6 +6,7 @@ HEADERS = style.h list.h
 
 gp: $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LIBS) 
+	$(MAKE) clean
 	
 main.o: main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $<

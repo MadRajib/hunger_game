@@ -201,11 +201,9 @@ static inline void list_splice_init(struct list_head *list,
 	}
 }
 
-#ifdef offsetof
-#undef offsetof
-#endif
+#ifndef offsetof
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
-
+#endif
 /**
  * container_of - cast a member of a structure out to the containing structure
  *
@@ -214,10 +212,11 @@ static inline void list_splice_init(struct list_head *list,
  * @member:     the name of the member within the struct.
  *
  */
+#ifndef container_of
 #define container_of(ptr, type, member) ({                      \
-        const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
+        const typeof(((type *)0)->member ) *__mptr = (ptr);    \
         (type *)( (char *)__mptr - offsetof(type,member) );})
-
+#endif
 
 /**
  * list_entry - get the struct for this entry

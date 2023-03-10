@@ -79,9 +79,16 @@ void vect_scalar_multiply_inplace(Vector2D_t *v1, float val) {
 	v1->y *= val;
 }
 
-void vect_get_random(Vector2D_t *vec, int _min, int _max) {
+void vect_set_random(Vector2D_t *vec, int _min, int _max) {
 	vec->x = random_int_range(_min, _max);	
 	vec->y = random_int_range(_min, _max);
+}
+
+Vector2D_t vect_get_random(int _min, int _max) {
+	Vector2D_t vec;
+	vec.x = random_int_range(_min, _max);	
+	vec.y = random_int_range(_min, _max);
+	return vec;
 }
 /*
 	Matrix_t mat;

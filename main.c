@@ -17,6 +17,13 @@
 #include "agent.h"
 #include "food.h"
 
+
+
+typedef  struct{
+	Food_t *food;
+	struct list_head node;
+} list_item;
+
 /* error handlers */
 int scc(int code) {
 	if (code < 0) {
@@ -55,6 +62,8 @@ int mouse_inside_window(Vector2D_t *pos){
 
 
 
+
+
 int main_gp() {
 	
 	Vector2D_t mouse_pos = {0, 0};
@@ -89,10 +98,25 @@ int main_gp() {
 
 	/*done init*/
 
-	srand(time(0));
+	srand(time(NULL));
+
+	/**/
+	LIST_HEAD(food_list);
+
+	for (int i=0; i< 10; i++) {
+		Food_t *food = food_int(vect_get_random(20, 600), (Vector2D_t){10,10}, (Color_t){0,255,0, 255}, ENERGY);
+		list_item *item = (list_item *) malloc(sizeof(list_item));
+		item->food = food;
+		INIT_LIST_HEAD(&item->node);
+		list_add(&item->node, &food_list);
+	}
+
+	struct list_head *iter;
+	list_item *item;
+
 
 	for (int i =0; i< agent_count ; i++) {	
-		vect_get_random(&tmp, 20, 600);
+		vect_set_random(&tmp, 20, 600);
 		agents[i] = agent_init(tmp);
 	}
 	
@@ -127,6 +151,12 @@ int main_gp() {
 		
 		mouse_pos.x = pos_x;
 		mouse_pos.y = pos_y;
+
+
+		__list_for_each(iter, &food_list) {
+			item = list_entry(iter,list_item, node);
+			food_render(renderer, item->food);
+		}
 	
 		for (int i = 0; i< agent_count ; i++) {
 			seek_force = sub_vect(&mouse_pos, &agents[i].pivot);

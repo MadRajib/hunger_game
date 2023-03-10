@@ -1,5 +1,5 @@
 PKGS=sld2
-CFLAGS=-Wall -g -std=c11 -pedantic `pkg-config --cflags sdl2`
+CFLAGS=-Wall -g -std=gnu11 -pedantic `pkg-config --cflags sdl2`
 LIBS=-lm `pkg-config --libs sdl2`
 OBJ = main.o agent.o food.o utils.o
 HEADERS = style.h list.h

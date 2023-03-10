@@ -21,7 +21,7 @@ typedef struct{
 	Food_type_t as;
 } Food_t;
 
-Food_t food_int(Vector2D_t , Vector2D_t , Color_t , Food_type_t);
+Food_t *food_int(Vector2D_t , Vector2D_t , Color_t , Food_type_t);
 void food_update(Food_t *);
 void food_render(SDL_Renderer *, Food_t *);
 

@@ -70,7 +70,8 @@ int main_gp() {
 	Vector2D_t seek_force;
 
 	int quit = 0;
-	const int agent_count = 100;
+	const int agent_count = 10;
+	const int food_count = 1;
 
 	Vector2D_t tmp;
 
@@ -103,7 +104,7 @@ int main_gp() {
 	/**/
 	LIST_HEAD(food_list);
 
-	for (int i=0; i< 10; i++) {
+	for (int i=0; i< food_count; i++) {
 		Food_t *food = food_int(vect_get_random(20, 600), (Vector2D_t){10,10}, (Color_t){0,255,0, 255}, ENERGY);
 		list_item *item = (list_item *) malloc(sizeof(list_item));
 		item->food = food;
@@ -159,9 +160,21 @@ int main_gp() {
 		}
 	
 		for (int i = 0; i< agent_count ; i++) {
-			seek_force = sub_vect(&mouse_pos, &agents[i].pivot);
+			
+			float min_seek_frc = 9999999;
+			Food_t *food =  NULL;
 
-			if(mouse_inside_window(&mouse_pos) && get_mag(&seek_force) < 100){
+			__list_for_each(iter, &food_list) {
+				item = list_entry(iter,list_item, node);	
+				seek_force = sub_vect(&item->food->pos, &agents[i].pivot);
+				float mag = get_mag(&seek_force);
+				if( mag < 100 && mag < min_seek_frc) {
+					min_seek_frc = mag;
+					food = item->food;
+				}
+			}
+
+			if(food){
 				set_mag(&seek_force, 0.001);
 				agent_apply_force(&agents[i], vect_scalar_multiply(&seek_force, 1));
 			}

@@ -68,7 +68,7 @@ int main_gp() {
 	//Vector2D_t mouse_pos = {0, 0};
 
 	int quit = 0;
-	const int agent_count = 5;
+	const int agent_count = 50;
 	const int food_count = 5;
 
 	clock_t p_clk, delta;
@@ -106,7 +106,6 @@ int main_gp() {
 		INIT_LIST_HEAD(&item->node);
 		list_add(&item->node, &food_list);
 	}
-
 
 	LIST_HEAD(agent_list);
 
@@ -151,11 +150,11 @@ int main_gp() {
 		//mouse_pos.y = pos_y;
 
 
-		struct list_head *agent_iter, *food_iter;
+		struct list_head *agent_iter, *food_iter, *tmp;
 		list_item *food_item, *agent_item;
 
 		/*Update elemetns*/
-		__list_for_each(agent_iter, &agent_list) {
+		list_for_each_safe(agent_iter, tmp, &agent_list) {
 			agent_item = list_entry(agent_iter,list_item, node);
 			float min_mag = 100;
 			list_item *nearest_food_item = NULL;
@@ -174,18 +173,31 @@ int main_gp() {
 			}
 
 			if(min_mag < 1 && nearest_food_item) {
+				switch (nearest_food_item->as.food->as) {
+					case ENERGY:
+						agent_update_fitness(agent_item->as.agent, 20);
+						break;
+					case POISION:
+						if(agent_update_fitness(agent_item->as.agent, -20) < 0){	
+							list_del(&agent_item->node);
+							free(agent_item->as.agent);
+							agent_item->as.agent = NULL;
+							free(agent_item);
+							agent_item = NULL;
+						}
+				}
+
 				food_random_int(nearest_food_item->as.food);
-				agent_update_fitness(agent_item->as.agent, 20);
-				printf("AGent fitness %d\n", agent_item->as.agent->fitness);
 
 			}else if(nearest_food_item){
 				set_mag(&min_seek_frc, 0.001);
 				agent_apply_force(agent_item->as.agent, vect_scalar_multiply(&min_seek_frc, 1));
 			}
 			
-			agent_update(agent_item->as.agent, delta*timescale);
+			if(agent_item)	
+				agent_update(agent_item->as.agent, delta*timescale);
 		}
-
+		
 		/*end of update*/
 		
 		/*render elements*/

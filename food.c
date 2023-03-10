@@ -18,7 +18,7 @@ Food_t *food_int(Vector2D_t pos, Vector2D_t dim) {
 
 void food_random_int(Food_t *food){	
 	food->pos = vect_get_random(20 , 600);
-	if(random_int_range(1 , 100) < 10){
+	if(random_int_range(1 , 100) < 30){
 		food->as = POISION;
 		food->color = (Color_t){255,0,0};
 	}else{

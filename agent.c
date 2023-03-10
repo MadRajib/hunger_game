@@ -81,6 +81,8 @@ void agent_apply_force(Agent_t *agent, Vector2D_t force) {
 Agent_t agent_init(Vector2D_t pos) {
 
 	Agent_t agent;	
+
+	agent.fitness = 0;
 	
 	agent.speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
 	agent.speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
@@ -110,8 +112,9 @@ Agent_t agent_init(Vector2D_t pos) {
 
 Agent_t * agent_ptr_init(Vector2D_t pos) {
 
-	Agent_t *agent = (Agent_t *)malloc(sizeof(Agent_t));	
-	
+	Agent_t *agent = (Agent_t *)malloc(sizeof(Agent_t));
+
+	agent->fitness = 0;
 	agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
 	agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
 	agent->acc = (Vector2D_t){0,0};

@@ -63,10 +63,6 @@ int mouse_inside_window(Vector2D_t *pos){
 	return 1;
 }
 
-
-
-
-
 int main_gp() {
 	
 	//Vector2D_t mouse_pos = {0, 0};
@@ -74,8 +70,6 @@ int main_gp() {
 	int quit = 0;
 	const int agent_count = 5;
 	const int food_count = 5;
-
-	Vector2D_t tmp;
 
 	clock_t p_clk, delta;
 	float timescale = 1;

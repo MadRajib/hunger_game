@@ -14,6 +14,7 @@ typedef struct{
 	Vector2D_t acc;
 	Vector2D_t head;
 	Vector2D_t pivot;
+	int fitness;
 } Agent_t;
 
 

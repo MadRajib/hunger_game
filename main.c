@@ -94,7 +94,7 @@ int main_gp() {
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT));
 
-	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 12);
+	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 20);
 
 	/*done init*/
 
@@ -134,8 +134,9 @@ int main_gp() {
 					switch ( event.key.keysym.sym ) {
 						case SDLK_q:
 							quit = 1;
-							break;
+							break;	
 					}
+					break;
 				case SDL_QUIT:
 					quit = 1;
 					break;
@@ -209,22 +210,24 @@ int main_gp() {
 			food_item = list_entry(food_iter,list_item, node);
 			food_render(renderer, food_item->as.food);
 		}
-		int count = 0;	
+		int count = 0;
+		float avg_fitness = 0;
 		__list_for_each(agent_iter, &agent_list) {
 			agent_item = list_entry(agent_iter,list_item, node);
 			agent_render(renderer, agent_item->as.agent);
 			count++;
+			avg_fitness +=agent_item->as.agent->fitness;
 		}
 
-		sprintf(text, "Agents: %d", count);
+		sprintf(text, "Agents: %d		Avg-fitness %f", count, avg_fitness/count);
 
 		SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text, (SDL_Color){255,255,255});
 		SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 		SDL_Rect Message_rect; //create a rect
-		Message_rect.x = 0;  //controls the rect's x coordinate 
-		Message_rect.y = SCREEN_HEIGHT - 30; // controls the rect's y coordinte
-		Message_rect.w = 100; // controls the width of the rect
-		Message_rect.h = 30;
+		Message_rect.x = SCREEN_WIDTH/2 - 150;  //controls the rect's x coordinate 
+		Message_rect.y = SCREEN_HEIGHT - 35; // controls the rect's y coordinte
+		Message_rect.w = 300; // controls the width of the rect
+		Message_rect.h = 40;
 
 		SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 

@@ -25,5 +25,6 @@ void agent_update(Agent_t *agent, float delta);
 void agent_apply_force(Agent_t *agent, Vector2D_t force);
 Agent_t agent_init(Vector2D_t pos);
 Agent_t *agent_ptr_init(Vector2D_t pos);
+int agent_update_fitness(Agent_t *agent, int fitness);
 
 #endif

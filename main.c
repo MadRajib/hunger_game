@@ -174,7 +174,9 @@ int main_gp() {
 			}
 
 			if(min_mag < 1 && nearest_food_item) {
-				nearest_food_item->as.food->pos =  vect_get_random(20 , 600);	
+				nearest_food_item->as.food->pos =  vect_get_random(20 , 600);
+				agent_update_fitness(agent_item->as.agent, 20);
+				printf("AGent fitness %d\n", agent_item->as.agent->fitness);
 
 			}else if(nearest_food_item){
 				set_mag(&min_seek_frc, 0.001);

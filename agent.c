@@ -34,9 +34,24 @@ void agent_rotate(Agent_t *agent, float angle) {
 
 
 void agent_render(SDL_Renderer *renderer, Agent_t *agent) {
+	for (int i =0; i< 3; i++) {
+		agent->shape.vertices[i].color = (struct SDL_Color){255 - agent->fitness,agent->fitness, 0};
+		agent->shape.vertices[i].tex_coord = (struct SDL_FPoint) {1};
+	}
+
 	SDL_RenderGeometry(renderer, NULL, agent->shape.vertices, 3, NULL , 3);
 }
 
+int agent_update_fitness(Agent_t *agent, int fitness){
+	agent->fitness += fitness;
+	if(agent->fitness < 0)
+		return -1;
+
+	if(agent->fitness > 255)
+		agent->fitness = 255;
+
+	return 0;
+}
 
 void agent_update(Agent_t *agent, float delta) {
 
@@ -128,7 +143,6 @@ Agent_t * agent_ptr_init(Vector2D_t pos) {
 	tri.vertices[2].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y + 8};
 
 	for (int i =0; i< 3; i++) {
-		tri.vertices[i].color = (struct SDL_Color){255,255,255};
 		tri.vertices[i].tex_coord = (struct SDL_FPoint) {1};
 	}	
 

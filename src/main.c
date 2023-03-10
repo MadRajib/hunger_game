@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "./style.h"
+#include "style.h"
 #include "utils.h"
 #include "list.h"
 #include "config.h"
@@ -94,7 +94,7 @@ int main_gp() {
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT));
 
-	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 20);
+	TTF_Font* Sans = TTF_OpenFont("./assets/Sans.ttf", 20);
 
 	/*done init*/
 

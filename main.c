@@ -67,11 +67,10 @@ int mouse_inside_window(Vector2D_t *pos){
 int main_gp() {
 	
 	Vector2D_t mouse_pos = {0, 0};
-	Vector2D_t seek_force;
 
 	int quit = 0;
-	const int agent_count = 10;
-	const int food_count = 1;
+	const int agent_count = 20;
+	const int food_count = 5;
 
 	Vector2D_t tmp;
 
@@ -161,22 +160,25 @@ int main_gp() {
 	
 		for (int i = 0; i< agent_count ; i++) {
 			
-			float min_seek_frc = 9999999;
+			float min_mag = 100;
 			Food_t *food =  NULL;
+			Vector2D_t min_seek_frc = {0, 0};
 
 			__list_for_each(iter, &food_list) {
 				item = list_entry(iter,list_item, node);	
-				seek_force = sub_vect(&item->food->pos, &agents[i].pivot);
+				Vector2D_t seek_force = sub_vect(&item->food->pos, &agents[i].pivot);
 				float mag = get_mag(&seek_force);
-				if( mag < 100 && mag < min_seek_frc) {
-					min_seek_frc = mag;
+				if( mag < min_mag) {
+					min_mag = mag;
 					food = item->food;
+					min_seek_frc.x = seek_force.x;
+					min_seek_frc.y = seek_force.y;
 				}
 			}
 
 			if(food){
-				set_mag(&seek_force, 0.001);
-				agent_apply_force(&agents[i], vect_scalar_multiply(&seek_force, 1));
+				set_mag(&min_seek_frc, 0.001);
+				agent_apply_force(&agents[i], vect_scalar_multiply(&min_seek_frc, 1));
 			}
 			
 			agent_update(&agents[i], delta*timescale);

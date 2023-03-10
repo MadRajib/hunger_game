@@ -100,7 +100,7 @@ int main_gp() {
 	LIST_HEAD(food_list);
 
 	for (int i=0; i< food_count; i++) {
-		Food_t *food = food_int(vect_get_random(20, 600), (Vector2D_t){10,10}, (Color_t){0,255,0, 255}, ENERGY);
+		Food_t *food = food_int(vect_get_random(20, 600), (Vector2D_t){10,10});
 		list_item *item = (list_item *) malloc(sizeof(list_item));
 		item->as.food = food;
 		INIT_LIST_HEAD(&item->node);
@@ -174,7 +174,7 @@ int main_gp() {
 			}
 
 			if(min_mag < 1 && nearest_food_item) {
-				nearest_food_item->as.food->pos =  vect_get_random(20 , 600);
+				food_random_int(nearest_food_item->as.food);
 				agent_update_fitness(agent_item->as.agent, 20);
 				printf("AGent fitness %d\n", agent_item->as.agent->fitness);
 

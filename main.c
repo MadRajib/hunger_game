@@ -72,12 +72,11 @@ int main_gp() {
 	//Vector2D_t mouse_pos = {0, 0};
 
 	int quit = 0;
-	const int agent_count = 10;
+	const int agent_count = 5;
 	const int food_count = 5;
 
 	Vector2D_t tmp;
 
-	Agent_t agents[agent_count];
 	clock_t p_clk, delta;
 	float timescale = 1;
 
@@ -114,13 +113,15 @@ int main_gp() {
 		list_add(&item->node, &food_list);
 	}
 
-	struct list_head *iter;
-	list_item *item;
+
+	LIST_HEAD(agent_list);
 
 
-	for (int i =0; i< agent_count ; i++) {	
-		vect_set_random(&tmp, 20, 600);
-		agents[i] = agent_init(tmp);
+	for (int i=0; i< agent_count; i++) {
+		list_item *item = (list_item *) malloc(sizeof(list_item));
+		item->as.agent = agent_ptr_init(vect_get_random(20, 600));
+		INIT_LIST_HEAD(&item->node);
+		list_add(&item->node, &agent_list);
 	}
 	
 	p_clk = clock();
@@ -156,43 +157,53 @@ int main_gp() {
 		//mouse_pos.y = pos_y;
 
 
-		__list_for_each(iter, &food_list) {
-			item = list_entry(iter,list_item, node);
-			food_render(renderer, item->as.food);
-		}
-	
-		for (int i = 0; i< agent_count ; i++) {
-			
+		struct list_head *agent_iter, *food_iter;
+		list_item *food_item, *agent_item;
+
+		/*Update elemetns*/
+		__list_for_each(agent_iter, &agent_list) {
+			agent_item = list_entry(agent_iter,list_item, node);
 			float min_mag = 100;
-			list_item *food_item = NULL;
+			list_item *nearest_food_item = NULL;
 			Vector2D_t min_seek_frc = {0, 0};
 
-			__list_for_each(iter, &food_list) {
-				item = list_entry(iter,list_item, node);	
-				Vector2D_t seek_force = sub_vect(&item->as.food->pos, &agents[i].pivot);
+			__list_for_each(food_iter, &food_list) {
+				food_item = list_entry(food_iter,list_item, node);	
+				Vector2D_t seek_force = sub_vect(&(food_item->as.food->pos),	&(agent_item->as.agent->pivot));
 				float mag = get_mag(&seek_force);
 				if( mag < min_mag) {
 					min_mag = mag;
-					food_item = item;
+					nearest_food_item = food_item;
 					min_seek_frc.x = seek_force.x;
 					min_seek_frc.y = seek_force.y;
 				}
 			}
 
-			if(min_mag < 1 && food_item) {
-				food_item->as.food->pos =  vect_get_random(20 , 600);	
+			if(min_mag < 1 && nearest_food_item) {
+				nearest_food_item->as.food->pos =  vect_get_random(20 , 600);	
 
-			}else if(food_item){
+			}else if(nearest_food_item){
 				set_mag(&min_seek_frc, 0.001);
-				agent_apply_force(&agents[i], vect_scalar_multiply(&min_seek_frc, 1));
+				agent_apply_force(agent_item->as.agent, vect_scalar_multiply(&min_seek_frc, 1));
 			}
 			
-			agent_update(&agents[i], delta*timescale);
+			agent_update(agent_item->as.agent, delta*timescale);
+		}
+
+		/*end of update*/
+		
+		/*render elements*/
+		__list_for_each(food_iter, &food_list) {
+			food_item = list_entry(food_iter,list_item, node);
+			food_render(renderer, food_item->as.food);
 		}
 		
-		for (int i = 0; i< agent_count ; i++) {
-			agent_render(renderer, &agents[i]);
+		__list_for_each(agent_iter, &agent_list) {
+			agent_item = list_entry(agent_iter,list_item, node);
+			agent_render(renderer, agent_item->as.agent);
 		}
+
+		/*end of render*/
 
 		SDL_RenderPresent(renderer);
 		

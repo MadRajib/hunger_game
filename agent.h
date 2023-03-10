@@ -23,5 +23,6 @@ void agent_render(SDL_Renderer *renderer, Agent_t *agent);
 void agent_update(Agent_t *agent, float delta);
 void agent_apply_force(Agent_t *agent, Vector2D_t force);
 Agent_t agent_init(Vector2D_t pos);
+Agent_t *agent_ptr_init(Vector2D_t pos);
 
 #endif

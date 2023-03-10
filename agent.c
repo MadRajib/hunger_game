@@ -1,5 +1,6 @@
 #include "agent.h"
 #include "config.h"
+#include <stdlib.h>
 
 void triangle(SDL_Renderer *renderer, SDL_FPoint points[3]) {
 
@@ -101,6 +102,36 @@ Agent_t agent_init(Vector2D_t pos) {
 	agent.shape = tri;
 
 	agent_rotate(&agent, get_angle(&agent.speed));
+
+	return agent;
+	
+	//SDL_RenderGeometry(renderer, NULL, tri.vertices, 3, NULL , 3);
+}
+
+Agent_t * agent_ptr_init(Vector2D_t pos) {
+
+	Agent_t *agent = (Agent_t *)malloc(sizeof(Agent_t));	
+	
+	agent->speed.x = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
+	agent->speed.y = random_float_range(-AGENT_MAX_SPEED, AGENT_MAX_SPEED) ;
+	agent->acc = (Vector2D_t){0,0};
+
+	agent->pivot = pos;
+
+	Triangle_t tri;
+
+	tri.vertices[0].position = (SDL_FPoint){ agent->pivot.x + 10, agent->pivot.y};
+	tri.vertices[1].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y - 8};
+	tri.vertices[2].position = (SDL_FPoint){ agent->pivot.x - 10, agent->pivot.y + 8};
+
+	for (int i =0; i< 3; i++) {
+		tri.vertices[i].color = (struct SDL_Color){255,255,255};
+		tri.vertices[i].tex_coord = (struct SDL_FPoint) {1};
+	}	
+
+	agent->shape = tri;
+
+	agent_rotate(agent, get_angle(&agent->speed));
 
 	return agent;
 	

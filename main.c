@@ -10,11 +10,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "agent.h"
 #include "./style.h"
 #include "utils.h"
 #include "list.h"
 #include "config.h"
+#include "agent.h"
+#include "food.h"
 
 /* error handlers */
 int scc(int code) {
@@ -52,6 +53,8 @@ int mouse_inside_window(Vector2D_t *pos){
 	return 1;
 }
 
+
+
 int main_gp() {
 	
 	Vector2D_t mouse_pos = {0, 0};
@@ -66,6 +69,7 @@ int main_gp() {
 	clock_t p_clk, delta;
 	float timescale = 1;
 
+	/* Init SDL */
 	scc(SDL_Init(SDL_INIT_VIDEO));
 
 	SDL_Window *window = scp(SDL_CreateWindow(
@@ -83,6 +87,7 @@ int main_gp() {
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT));
 
+	/*done init*/
 
 	srand(time(0));
 

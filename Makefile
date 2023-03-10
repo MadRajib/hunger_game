@@ -1,6 +1,6 @@
 PKGS=sld2
 CFLAGS=-Wall -g -std=gnu11 `pkg-config --cflags sdl2`
-LIBS=-lm `pkg-config --libs sdl2`
+LIBS=-lm `pkg-config --libs sdl2` -lSDL2_ttf
 OBJ = main.o agent.o food.o utils.o
 HEADERS = style.h list.h
 

@@ -7,6 +7,7 @@
 #include <stdio.h> 
 #include <assert.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -73,9 +74,10 @@ int main_gp() {
 
 	clock_t p_clk, delta;
 	float timescale = 1;
+	char text[80];
 
 	/* Init SDL */
-	scc(SDL_Init(SDL_INIT_VIDEO));
+	scc(SDL_Init(SDL_INIT_VIDEO) || TTF_Init());
 
 	SDL_Window *window = scp(SDL_CreateWindow(
 		"Hunger Game",
@@ -91,6 +93,8 @@ int main_gp() {
 		renderer,
 		SCREEN_WIDTH,
 		SCREEN_HEIGHT));
+
+	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 12);
 
 	/*done init*/
 
@@ -205,16 +209,31 @@ int main_gp() {
 			food_item = list_entry(food_iter,list_item, node);
 			food_render(renderer, food_item->as.food);
 		}
-		
+		int count = 0;	
 		__list_for_each(agent_iter, &agent_list) {
 			agent_item = list_entry(agent_iter,list_item, node);
 			agent_render(renderer, agent_item->as.agent);
+			count++;
 		}
+
+		sprintf(text, "Agents: %d", count);
+
+		SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text, (SDL_Color){255,255,255});
+		SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+		SDL_Rect Message_rect; //create a rect
+		Message_rect.x = 0;  //controls the rect's x coordinate 
+		Message_rect.y = SCREEN_HEIGHT - 30; // controls the rect's y coordinte
+		Message_rect.w = 100; // controls the width of the rect
+		Message_rect.h = 30;
+
+		SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
 		/*end of render*/
 
 		SDL_RenderPresent(renderer);
 		
+		SDL_FreeSurface(surfaceMessage);
+		SDL_DestroyTexture(Message);
 	}
 
 	SDL_Quit();

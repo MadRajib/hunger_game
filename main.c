@@ -17,10 +17,13 @@
 #include "agent.h"
 #include "food.h"
 
-
+typedef union{
+	Food_t *food;
+	Agent_t *agent;
+} item_type;
 
 typedef  struct{
-	Food_t *food;
+	item_type as;
 	struct list_head node;
 } list_item;
 
@@ -66,7 +69,7 @@ int mouse_inside_window(Vector2D_t *pos){
 
 int main_gp() {
 	
-	Vector2D_t mouse_pos = {0, 0};
+	//Vector2D_t mouse_pos = {0, 0};
 
 	int quit = 0;
 	const int agent_count = 10;
@@ -106,7 +109,7 @@ int main_gp() {
 	for (int i=0; i< food_count; i++) {
 		Food_t *food = food_int(vect_get_random(20, 600), (Vector2D_t){10,10}, (Color_t){0,255,0, 255}, ENERGY);
 		list_item *item = (list_item *) malloc(sizeof(list_item));
-		item->food = food;
+		item->as.food = food;
 		INIT_LIST_HEAD(&item->node);
 		list_add(&item->node, &food_list);
 	}
@@ -124,8 +127,8 @@ int main_gp() {
 
 	while (!quit) {
 		SDL_Event event;
-		int pos_x  = 0;
-		int pos_y  = 0;
+		//int pos_x  = 0;
+		//int pos_y  = 0;
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -147,15 +150,15 @@ int main_gp() {
 		sdl_set_color_hex(renderer, BACKGROUND_CLR);
 		scc(SDL_RenderClear(renderer));	
 
-		SDL_GetMouseState(&pos_x, &pos_y);
+		//SDL_GetMouseState(&pos_x, &pos_y);
 		
-		mouse_pos.x = pos_x;
-		mouse_pos.y = pos_y;
+		//mouse_pos.x = pos_x;
+		//mouse_pos.y = pos_y;
 
 
 		__list_for_each(iter, &food_list) {
 			item = list_entry(iter,list_item, node);
-			food_render(renderer, item->food);
+			food_render(renderer, item->as.food);
 		}
 	
 		for (int i = 0; i< agent_count ; i++) {
@@ -166,7 +169,7 @@ int main_gp() {
 
 			__list_for_each(iter, &food_list) {
 				item = list_entry(iter,list_item, node);	
-				Vector2D_t seek_force = sub_vect(&item->food->pos, &agents[i].pivot);
+				Vector2D_t seek_force = sub_vect(&item->as.food->pos, &agents[i].pivot);
 				float mag = get_mag(&seek_force);
 				if( mag < min_mag) {
 					min_mag = mag;
@@ -177,7 +180,7 @@ int main_gp() {
 			}
 
 			if(min_mag < 1 && food_item) {
-				food_item->food->pos =  vect_get_random(20 , 600);	
+				food_item->as.food->pos =  vect_get_random(20 , 600);	
 
 			}else if(food_item){
 				set_mag(&min_seek_frc, 0.001);

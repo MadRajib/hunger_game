@@ -69,7 +69,7 @@ int main_gp() {
 	Vector2D_t mouse_pos = {0, 0};
 
 	int quit = 0;
-	const int agent_count = 20;
+	const int agent_count = 10;
 	const int food_count = 5;
 
 	Vector2D_t tmp;
@@ -161,7 +161,7 @@ int main_gp() {
 		for (int i = 0; i< agent_count ; i++) {
 			
 			float min_mag = 100;
-			Food_t *food =  NULL;
+			list_item *food_item = NULL;
 			Vector2D_t min_seek_frc = {0, 0};
 
 			__list_for_each(iter, &food_list) {
@@ -170,13 +170,16 @@ int main_gp() {
 				float mag = get_mag(&seek_force);
 				if( mag < min_mag) {
 					min_mag = mag;
-					food = item->food;
+					food_item = item;
 					min_seek_frc.x = seek_force.x;
 					min_seek_frc.y = seek_force.y;
 				}
 			}
 
-			if(food){
+			if(min_mag < 1 && food_item) {
+				food_item->food->pos =  vect_get_random(20 , 600);	
+
+			}else if(food_item){
 				set_mag(&min_seek_frc, 0.001);
 				agent_apply_force(&agents[i], vect_scalar_multiply(&min_seek_frc, 1));
 			}
